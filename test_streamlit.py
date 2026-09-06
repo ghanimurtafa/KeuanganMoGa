@@ -59,6 +59,9 @@ st.markdown(
         div[data-testid="stColumn"] label p { font-size: 0.8rem; }
         div[data-testid="stColumn"] div[data-baseweb="select"] { font-size: 0.85rem; }
         div[data-testid="stColumn"] input { font-size: 0.85rem; }
+
+        /* Make metric values slightly smaller for a tighter dashboard layout */
+        div[data-testid="stMetricValue"] { font-size: 1.1rem !important; }
     </style>
     """,
     unsafe_allow_html=True,
