@@ -368,6 +368,9 @@ with st.expander("📖 Daftar Urgensi / Kantong / Kategori / Subkategori", expan
 # 3 latest expenses — from the "Pengeluaran" sheet using lastrow
 # ---------------------------------------------------------------
 st.divider()
+if st.button("🔄 Muat ulang", use_container_width=True):
+    load_dashboard_data.clear()
+    
 st.subheader("🧾 3 Transaksi Terakhir")
 
 try:
@@ -380,9 +383,6 @@ except Exception as e:
 # ---------------------------------------------------------------
 st.divider()
 st.subheader("📊 Ringkasan")
-
-if st.button("🔄 Muat ulang", use_container_width=True):
-    load_dashboard_data.clear()
 
 try:
     info, ringkasan, aset, primer, tersier = load_dashboard_data()
