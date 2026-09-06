@@ -33,17 +33,37 @@ with st.sidebar:
         st.session_state.authenticated = False
         st.rerun()
 
-# Trim default Streamlit top padding so the form starts higher on screen
+# Trim default Streamlit top padding, and force columns to stay side-by-side
+# on mobile instead of Streamlit's default auto-stacking below ~640px width.
 st.markdown(
     """
     <style>
         .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
         div[data-testid="stVerticalBlock"] > div { gap: 0.5rem; }
+
+        /* Force horizontal blocks (st.columns) to stay in a row on any
+           screen width, overriding Streamlit's mobile auto-stack. */
+        div[data-testid="stHorizontalBlock"] {
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 0.5rem;
+        }
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 0 !important;
+            width: 0 !important;
+            min-width: 0 !important;
+        }
+
+        /* Shrink label/input text a bit so 3-up columns don't overflow */
+        div[data-testid="stColumn"] label p { font-size: 0.8rem; }
+        div[data-testid="stColumn"] div[data-baseweb="select"] { font-size: 0.85rem; }
+        div[data-testid="stColumn"] input { font-size: 0.85rem; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+st.write("")
 st.write("💸 Input Pengeluaran")
 
 # VLOOKUP Database Mapping
