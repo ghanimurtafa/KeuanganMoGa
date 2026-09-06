@@ -408,11 +408,12 @@ with st.expander("📖 Daftar Urgensi / Kantong / Kategori / Subkategori", expan
 # ---------------------------------------------------------------
 # 3 latest expenses — from the "Pengeluaran" sheet using lastrow
 # ---------------------------------------------------------------
-st.divider()
+
+# st.divider()
 if st.button("🔄 Muat ulang", use_container_width=True):
     load_dashboard_data.clear()
     
-st.subheader("🧾 3 Transaksi Terakhir")
+st.write("🧾 3 Transaksi Terakhir")
 
 try:
     render_latest_expenses(load_latest_expenses(3))
@@ -422,8 +423,10 @@ except Exception as e:
 # ---------------------------------------------------------------
 # Dashboard — replicates the "Input" sheet summary below the form
 # ---------------------------------------------------------------
-st.divider()
-st.subheader("📊 Ringkasan")
+
+# st.divider()
+
+st.write("📊 Ringkasan")
 
 try:
     info, ringkasan, aset, primer, tersier = load_dashboard_data()
@@ -451,11 +454,11 @@ try:
         total_kekayaan = aset[2][2] if len(aset) > 2 else "-"
 
         st.markdown("**Aset**")
-        a1, a2, a3 = st.columns(3)
+        a1, a2, a3, a4 = st.columns(4)
         a1.metric(headers_a[0] or "Aset Lancar", values_a[0] or "-")
         a2.metric(headers_a[1] or "Aset Tidak Lancar", values_a[1] or "-")
         a3.metric(headers_a[2] or "Aset Tak Berwujud", values_a[2] or "-")
-        st.metric("Total Kekayaan", total_kekayaan or "-")
+        a4.metric("Total Kekayaan", total_kekayaan or "-")
 
     # Bulanan Primer categories
     if primer:
