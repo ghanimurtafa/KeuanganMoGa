@@ -3,42 +3,10 @@ import gspread
 from datetime import date
 
 st.set_page_config(page_title="Input Pengeluaran", page_icon="💸", layout="centered")
+# st.title("💸 Input Pengeluaran")
+st.write("Input Pengeluaran")
 
-# --- 1. PASSWORD AUTHENTICATION GATE ---
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-
-if not st.session_state.authenticated:
-    st.title("🔐 Restricted Access")
-    st.markdown("Please enter your password to access the expense tracker.")
-    
-    with st.form("login_form"):
-        entered_password = st.text_input("Password", type="password")
-        login_submitted = st.form_submit_button("Login", use_container_width=True)
-        
-        if login_submitted:
-            # Check against the secret password
-            correct_password = st.secrets["auth"]["app_password"]
-            if entered_password == correct_password:
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("❌ Incorrect password!")
-                
-    # Stop execution here so the rest of the app doesn't load
-    st.stop()
-
-# --- 2. MAIN APP (Runs only after successful login) ---
-
-# Optional: Add a logout button in the sidebar
-with st.sidebar:
-    if st.button("🔒 Logout"):
-        st.session_state.authenticated = False
-        st.rerun()
-
-st.write("💸 Input Pengeluaran")
-
-# VLOOKUP Database Mapping
+# 1. VLOOKUP Database Mapping
 SUBKATEGORI_DATA = {
     "Ziswaf Lain": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Ziswaf"},
     "Zakat Fitrah": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Zakat Fitrah"},
@@ -122,10 +90,12 @@ SUBKATEGORI_DATA = {
     "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"}
 }
 
+# 2. Session state to clear fields after submit (since we removed st.form)
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
 k = st.session_state.reset_key
 
+# 3. Build the Live UI
 tanggal = st.date_input("Tanggal", value=date.today(), key=f"tgl_{k}")
 
 col1, col2 = st.columns(2)
@@ -141,12 +111,15 @@ with col2:
     ]
     penyimpanan = st.selectbox("Penyimpanan", options=penyimpanan_list, index=9, key=f"peny_{k}")
 
+# --- NEW VLOOKUP LOGIC ---
 subkategori = st.selectbox("Subkategori", options=list(SUBKATEGORI_DATA.keys()), key=f"subkat_{k}")
 
+# Fetch matching data based on selection
 urgensi = SUBKATEGORI_DATA[subkategori]["urgensi"]
 kantong = SUBKATEGORI_DATA[subkategori]["kantong"]
 kategori = SUBKATEGORI_DATA[subkategori]["kategori"]
 
+# Display them as disabled (read-only) text inputs
 col_u, col_ka, col_kat = st.columns(3)
 with col_u:
     st.text_input("Urgensi", value=urgensi, disabled=True, key=f"u_{k}")
@@ -154,10 +127,12 @@ with col_ka:
     st.text_input("Kantong", value=kantong, disabled=True, key=f"ka_{k}")
 with col_kat:
     st.text_input("Kategori", value=kategori, disabled=True, key=f"kat_{k}")
+# -------------------------
 
 nominal = st.number_input("Nominal", min_value=0.0, format="%.2f", key=f"nom_{k}")
 deskripsi = st.text_area("Deskripsi", key=f"desk_{k}")
 
+# 4. Handle Submission
 if st.button("Submit Data", use_container_width=True):
     if nominal <= 0:
         st.error("⚠️ Nominal tidak boleh kosong atau nol!")
@@ -181,9 +156,12 @@ if st.button("Submit Data", use_container_width=True):
                 updates = [
                     {'range': f'C{lastrow}', 'values': [[tanggal.strftime("%d/%m/%Y")]]},
                     {'range': f'D{lastrow}', 'values': [[tipe]]},
+                    
+                    # Writing the VLOOKUP data to Columns E, F, G 
                     {'range': f'E{lastrow}', 'values': [[urgensi]]},
                     {'range': f'F{lastrow}', 'values': [[kantong]]},
                     {'range': f'G{lastrow}', 'values': [[kategori]]},
+                    
                     {'range': f'H{lastrow}', 'values': [[subkategori]]},                         
                     {'range': f'I{lastrow}', 'values': [[oleh]]},                         
                     {'range': f'J{lastrow}', 'values': [[mata_uang]]},                    
@@ -195,6 +173,7 @@ if st.button("Submit Data", use_container_width=True):
                 pengeluaran.batch_update(updates)
                 st.success(f"✅ Berhasil menambahkan {mata_uang} {nominal} ke baris {lastrow}!")
                 
+                # Increment the key to force all widgets to clear instantly
                 st.session_state.reset_key += 1
                 st.rerun()
                 
