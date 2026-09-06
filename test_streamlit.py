@@ -3,7 +3,8 @@ import gspread
 from datetime import date
 
 st.set_page_config(page_title="Input Pengeluaran", page_icon="💸", layout="centered")
-st.title("💸 Input Pengeluaran")
+# st.title("💸 Input Pengeluaran")
+st.write("Input Pengeluaran")
 
 # 1. VLOOKUP Database Mapping
 SUBKATEGORI_DATA = {
