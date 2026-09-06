@@ -231,10 +231,46 @@ def load_latest_expenses(n=3):
     if latest_row < 2:
         return []
 
-    start_row = max(2, latest_row - (n - 1))
-    # Fetch columns C..L in one call, then pick out only what we need
-    values = ws.get(f"C{start_row}:L{latest_row}")
-    return list(reversed(values))  # most recent first
+    # Fetch all rows from C2..Clatest_row and iterate backwards, skipping
+    # any rows whose tanggal (col C) is in the future. Keep going until
+    # we collected `n` rows with tanggal <= today or we reach the top.
+    values = ws.get(f"C2:L{latest_row}") or []
+
+    from datetime import datetime, date
+    today = date.today()
+
+    def _parse_date(s):
+        if not s:
+            return None
+        # Common formats: dd/mm/YYYY (used when writing), ISO, or others
+        for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
+            try:
+                return datetime.strptime(s, fmt).date()
+            except Exception:
+                continue
+        # Fallback to pandas parsing (dayfirst)
+        try:
+            return pd.to_datetime(s, dayfirst=True).date()
+        except Exception:
+            return None
+
+    collected = []
+    # iterate newest->oldest
+    for row in reversed(values):
+        if len(collected) >= n:
+            break
+        tanggal_str = row[0] if len(row) > 0 else ""
+        parsed = _parse_date(tanggal_str)
+        if parsed is None:
+            # skip rows with invalid or missing tanggal
+            continue
+        if parsed <= today:
+            collected.append(row)
+        else:
+            # tanggal > today -> skip and continue upward
+            continue
+
+    return collected  # most recent first
 
 
 def render_latest_expenses(rows):
