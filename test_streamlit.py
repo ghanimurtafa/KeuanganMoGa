@@ -367,7 +367,12 @@ if st.button("Submit Data", use_container_width=True, type="primary"):
                     {'range': f'M{lastrow}', 'values': [[penyimpanan]]},
                 ]
 
-                pengeluaran.batch_update(updates)
+                # Write each range with USER_ENTERED so Sheets parses the
+                # date string as a date instead of inserting a leading
+                # apostrophe (text marker). Using the per-worksheet
+                # `update` method avoids the JSON payload format mismatch.
+                for upd in updates:
+                    pengeluaran.update(upd['range'], upd['values'], value_input_option='USER_ENTERED')
                 st.success(f"✅ Berhasil menambahkan {mata_uang} {nominal} ke baris {lastrow}!")
 
                 load_dashboard_data.clear()  # refresh dashboard so it reflects the new entry
