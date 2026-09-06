@@ -341,7 +341,12 @@ if st.button("Submit Data", use_container_width=True, type="primary"):
 
 try:
     _sheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
-    st.link_button("📄 Buka Spreadsheet", _sheet_url)
+    dashboard_url = "https://datastudio.google.com/u/0/reporting/3a415aab-b183-477b-a2ef-6c199832b2b4/page/zqjpF"
+    c1, c2 = st.columns(2)
+    with c1:
+        st.link_button("📄 Buka Spreadsheet", _sheet_url)
+    with c2:
+        st.link_button("📊 Buka Dashboard", dashboard_url)
 except Exception:
     pass
 
