@@ -11,30 +11,38 @@ if "authenticated" not in st.session_state:
 if not st.session_state.authenticated:
     st.title("🔐 Restricted Access")
     st.markdown("Please enter your password to access the expense tracker.")
-    
+
     with st.form("login_form"):
         entered_password = st.text_input("Password", type="password")
         login_submitted = st.form_submit_button("Login", use_container_width=True)
-        
+
         if login_submitted:
-            # Check against the secret password
             correct_password = st.secrets["auth"]["app_password"]
             if entered_password == correct_password:
                 st.session_state.authenticated = True
                 st.rerun()
             else:
                 st.error("❌ Incorrect password!")
-                
-    # Stop execution here so the rest of the app doesn't load
+
     st.stop()
 
 # --- 2. MAIN APP (Runs only after successful login) ---
 
-# Optional: Add a logout button in the sidebar
 with st.sidebar:
     if st.button("🔒 Logout"):
         st.session_state.authenticated = False
         st.rerun()
+
+# Trim default Streamlit top padding so the form starts higher on screen
+st.markdown(
+    """
+    <style>
+        .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
+        div[data-testid="stVerticalBlock"] > div { gap: 0.5rem; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.write("💸 Input Pengeluaran")
 
@@ -85,7 +93,7 @@ SUBKATEGORI_DATA = {
     "Peralatan Pendidikan": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Pendidikan"},
     "Pulsa & Internet HP": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Komunikasi"},
     "Administrasi": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Komunikasi"},
-    "Transportasi Umum": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Transposrtasi"}, 
+    "Transportasi Umum": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Transposrtasi"},
     "Transportasi Online": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Transposrtasi"},
     "Bensin": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Transposrtasi"},
     "Parkir": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Transposrtasi"},
@@ -119,46 +127,51 @@ SUBKATEGORI_DATA = {
     "Franchise/Bisnis": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Saham": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Investasi Lain": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
-    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"}
+    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"},
 }
 
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
 k = st.session_state.reset_key
 
-tanggal = st.date_input("Tanggal", value=date.today(), key=f"tgl_{k}")
+# --- Row 1: Tanggal + Nominal ---
+r1c1, r1c2 = st.columns(2)
+with r1c1:
+    tanggal = st.date_input("Tanggal", value=date.today(), key=f"tgl_{k}")
+with r1c2:
+    nominal = st.number_input("Nominal", min_value=0.0, format="%.2f", key=f"nom_{k}")
 
-col1, col2 = st.columns(2)
-with col1:
+# --- Row 2: Tipe + Mata Uang + Oleh (short values, fit 3-up) ---
+r2c1, r2c2, r2c3 = st.columns(3)
+with r2c1:
     tipe = st.selectbox("Tipe", options=["RT", "Mo"], key=f"tipe_{k}")
+with r2c2:
     mata_uang = st.selectbox("Mata Uang", options=["EUR", "IDR"], key=f"mu_{k}")
-with col2:
+with r2c3:
     oleh = st.selectbox("Oleh", options=["Gan", "Mof"], key=f"oleh_{k}")
-    penyimpanan_list = [ "ABN Mo-Ga",
-        "Permata Gan", "Jago Mo-Ga", "Mandiri Gan", "Gopay Gan", "Cash Gan", 
-        "Emoney Gan", "Jenius Gan", "Revolut Gan", "ABN Gan", 
-        "Wise Gan", "Kas Gan", "Kas Mo", "Mandiri Mo"
+
+# --- Row 3: Penyimpanan + Subkategori ---
+r3c1, r3c2 = st.columns(2)
+with r3c1:
+    penyimpanan_list = [
+        "ABN Mo-Ga", "Permata Gan", "Jago Mo-Ga", "Mandiri Gan", "Gopay Gan",
+        "Cash Gan", "Emoney Gan", "Jenius Gan", "Revolut Gan", "ABN Gan",
+        "Wise Gan", "Kas Gan", "Kas Mo", "Mandiri Mo",
     ]
     penyimpanan = st.selectbox("Penyimpanan", options=penyimpanan_list, index=9, key=f"peny_{k}")
-
-subkategori = st.selectbox("Subkategori", options=list(SUBKATEGORI_DATA.keys()), key=f"subkat_{k}")
+with r3c2:
+    subkategori = st.selectbox("Subkategori", options=list(SUBKATEGORI_DATA.keys()), key=f"subkat_{k}")
 
 urgensi = SUBKATEGORI_DATA[subkategori]["urgensi"]
 kantong = SUBKATEGORI_DATA[subkategori]["kantong"]
 kategori = SUBKATEGORI_DATA[subkategori]["kategori"]
 
-col_u, col_ka, col_kat = st.columns(3)
-with col_u:
-    st.text_input("Urgensi", value=urgensi, disabled=True, key=f"u_{k}")
-with col_ka:
-    st.text_input("Kantong", value=kantong, disabled=True, key=f"ka_{k}")
-with col_kat:
-    st.text_input("Kategori", value=kategori, disabled=True, key=f"kat_{k}")
+# Auto-derived fields shown as one compact read-only line instead of 3 disabled inputs
+st.caption(f"📍 {urgensi}  ·  {kantong}  ·  {kategori}")
 
-nominal = st.number_input("Nominal", min_value=0.0, format="%.2f", key=f"nom_{k}")
-deskripsi = st.text_area("Deskripsi", key=f"desk_{k}")
+deskripsi = st.text_area("Deskripsi", key=f"desk_{k}", height=70)
 
-if st.button("Submit Data", use_container_width=True):
+if st.button("Submit Data", use_container_width=True, type="primary"):
     if nominal <= 0:
         st.error("⚠️ Nominal tidak boleh kosong atau nol!")
     else:
@@ -166,37 +179,37 @@ if st.button("Submit Data", use_container_width=True):
             with st.spinner("Menyimpan data..."):
                 secrets_dict = dict(st.secrets["connections"]["gsheets"])
                 client = gspread.service_account_from_dict(secrets_dict)
-                
+
                 sheet_url = secrets_dict["spreadsheet"]
                 sh = client.open_by_url(sheet_url)
                 pengeluaran = sh.worksheet("Pengeluaran")
-                
+
                 lastrow_val = pengeluaran.acell('A1').value
                 if not lastrow_val:
                     st.error("Cell A1 is kosong. Tidak dapat menentukan baris terakhir.")
                     st.stop()
-                    
+
                 lastrow = str(lastrow_val)
-                
+
                 updates = [
                     {'range': f'C{lastrow}', 'values': [[tanggal.strftime("%d/%m/%Y")]]},
                     {'range': f'D{lastrow}', 'values': [[tipe]]},
                     {'range': f'E{lastrow}', 'values': [[urgensi]]},
                     {'range': f'F{lastrow}', 'values': [[kantong]]},
                     {'range': f'G{lastrow}', 'values': [[kategori]]},
-                    {'range': f'H{lastrow}', 'values': [[subkategori]]},                         
-                    {'range': f'I{lastrow}', 'values': [[oleh]]},                         
-                    {'range': f'J{lastrow}', 'values': [[mata_uang]]},                    
-                    {'range': f'K{lastrow}', 'values': [[nominal]]},                      
-                    {'range': f'L{lastrow}', 'values': [[deskripsi]]},                     
-                    {'range': f'M{lastrow}', 'values': [[penyimpanan]]}                  
+                    {'range': f'H{lastrow}', 'values': [[subkategori]]},
+                    {'range': f'I{lastrow}', 'values': [[oleh]]},
+                    {'range': f'J{lastrow}', 'values': [[mata_uang]]},
+                    {'range': f'K{lastrow}', 'values': [[nominal]]},
+                    {'range': f'L{lastrow}', 'values': [[deskripsi]]},
+                    {'range': f'M{lastrow}', 'values': [[penyimpanan]]},
                 ]
-                
+
                 pengeluaran.batch_update(updates)
                 st.success(f"✅ Berhasil menambahkan {mata_uang} {nominal} ke baris {lastrow}!")
-                
+
                 st.session_state.reset_key += 1
                 st.rerun()
-                
+
         except Exception as e:
             st.error(f"❌ Terjadi kesalahan: {e}")
