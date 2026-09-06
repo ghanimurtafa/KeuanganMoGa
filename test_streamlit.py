@@ -63,7 +63,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
+st.write("")
 st.write("💸 Input Pengeluaran")
 
 # VLOOKUP Database Mapping
@@ -141,13 +141,13 @@ SUBKATEGORI_DATA = {
     "Konversi Uang": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Konversi Uang"},
     "Pendidikan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pendidikan"},
     "Pajak Tahunan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pajak"},
-    "Anggaran Disimpan": {"urgensi": "Non-Bulanan", "kantong": "Anggaran Disimpan", "kategori": "Anggaran Disimpan"},
+    "Anggaran Disimpan": {"urgensi": "Non-Bulanan", "kantong": "Anggaran Disimpan", "kategori": "Anggaran Disimpan"},    
     "Emas": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Bibit": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Franchise/Bisnis": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Saham": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Investasi Lain": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
-    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"},    
+    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"},
 }
 
 # ---------------------------------------------------------------
@@ -277,11 +277,11 @@ with r2c3:
 r3c1, r3c2 = st.columns(2)
 with r3c1:
     penyimpanan_list = [
-        "ABN Mo-Ga", "Permata Gan", "Jago Mo-Ga", "Mandiri Gan", "Gopay Gan",
-        "Cash Gan", "Emoney Gan", "Jenius Gan", "Revolut Gan", "ABN Gan",
+        "ABN Mo-Ga", "ABN Gan", "Permata Gan", "Jago Mo-Ga", "Mandiri Gan", "Gopay Gan",
+        "Cash Gan", "Emoney Gan", "Jenius Gan", "Revolut Gan", 
         "Wise Gan", "Kas Gan", "Kas Mo", "Mandiri Mo",
     ]
-    penyimpanan = st.selectbox("Penyimpanan", options=penyimpanan_list, index=9, key=f"peny_{k}")
+    penyimpanan = st.selectbox("Penyimpanan", options=penyimpanan_list, index=0, key=f"peny_{k}")
 with r3c2:
     subkategori = st.selectbox("Subkategori", options=list(SUBKATEGORI_DATA.keys()), key=f"subkat_{k}")
 
@@ -338,6 +338,12 @@ if st.button("Submit Data", use_container_width=True, type="primary"):
 
         except Exception as e:
             st.error(f"❌ Terjadi kesalahan: {e}")
+
+try:
+    _sheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+    st.link_button("📄 Buka Spreadsheet", _sheet_url)
+except Exception:
+    pass
 
 def render_subkategori_structure():
     from collections import defaultdict
