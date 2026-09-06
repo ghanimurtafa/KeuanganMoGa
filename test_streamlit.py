@@ -214,6 +214,45 @@ def render_group_table(title, subtitle, header_row, data_rows):
     st.dataframe(styler, hide_index=True, use_container_width=True)
 
 
+@st.cache_data(ttl=30, show_spinner="Memuat transaksi terakhir...")
+def load_latest_expenses(n=3):
+    secrets_dict = dict(st.secrets["connections"]["gsheets"])
+    client = gspread.service_account_from_dict(secrets_dict)
+    sh = client.open_by_url(secrets_dict["spreadsheet"])
+    ws = sh.worksheet("Pengeluaran")
+
+    lastrow_val = ws.acell('A1').value
+    if not lastrow_val:
+        return []
+    try:
+        latest_row = int(lastrow_val) - 1  # A1 points to the next empty row
+    except ValueError:
+        return []
+    if latest_row < 2:
+        return []
+
+    start_row = max(2, latest_row - (n - 1))
+    # Fetch columns C..L in one call, then pick out only what we need
+    values = ws.get(f"C{start_row}:L{latest_row}")
+    return list(reversed(values))  # most recent first
+
+
+def render_latest_expenses(rows):
+    records = []
+    for r in rows:
+        tanggal, _tipe, _urg, _kan, _kat, subkategori, _oleh, mata_uang, nominal, deskripsi = _pad(r, 10)
+        records.append({
+            "Tanggal": tanggal,
+            "Subkategori": subkategori,
+            "Deskripsi": deskripsi,
+            "Nominal": f"{mata_uang} {nominal}".strip(),
+        })
+    if not records:
+        st.caption("_(belum ada transaksi)_")
+        return
+    st.dataframe(pd.DataFrame(records), hide_index=True, use_container_width=True)
+
+
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
 k = st.session_state.reset_key
@@ -293,11 +332,23 @@ if st.button("Submit Data", use_container_width=True, type="primary"):
                 st.success(f"✅ Berhasil menambahkan {mata_uang} {nominal} ke baris {lastrow}!")
 
                 load_dashboard_data.clear()  # refresh dashboard so it reflects the new entry
+                load_latest_expenses.clear()  # refresh latest-expenses list too
                 st.session_state.reset_key += 1
                 st.rerun()
 
         except Exception as e:
             st.error(f"❌ Terjadi kesalahan: {e}")
+
+# ---------------------------------------------------------------
+# 3 latest expenses — from the "Pengeluaran" sheet using lastrow
+# ---------------------------------------------------------------
+st.divider()
+st.subheader("🧾 3 Transaksi Terakhir")
+
+try:
+    render_latest_expenses(load_latest_expenses(3))
+except Exception as e:
+    st.warning(f"Tidak bisa memuat transaksi terakhir: {e}")
 
 # ---------------------------------------------------------------
 # Dashboard — replicates the "Input" sheet summary below the form
