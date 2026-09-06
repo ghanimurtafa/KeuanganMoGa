@@ -68,27 +68,6 @@ st.write("💸 Input Pengeluaran")
 
 # VLOOKUP Database Mapping
 SUBKATEGORI_DATA = {
-    "Ziswaf Lain": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Ziswaf"},
-    "Zakat Fitrah": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Zakat Fitrah"},
-    "Zakat Mal": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Zakat Mal"},
-    "Wakaf": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Wakaf"},
-    "Bela Sungkawa": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Bela Sungkawa"},
-    "Pernikahan": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Pernikahan"},
-    "Keluarga": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
-    "Darurat (Keluarga)": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
-    "Travelio": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
-    "Darurat": {"urgensi": "Non-Bulanan", "kantong": "Darurat", "kategori": "Darurat"},
-    "Haji": {"urgensi": "Non-Bulanan", "kantong": "Haji", "kategori": "Haji"},
-    "Liburan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Liburan"},
-    "Pulang Kampung": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pulang Kampung"},
-    "Masa Depan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
-    "Kerjaan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
-    "Investasi": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Investasi"},
-    "Langganan Lain2": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
-    "Konversi Uang": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Konversi Uang"},
-    "Pendidikan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pendidikan"},
-    "Pajak Tahunan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pajak"},
-    "Anggaran Disimpan": {"urgensi": "Non-Bulanan", "kantong": "Anggaran Disimpan", "kategori": "Anggaran Disimpan"},
     "Dana Tak Terduga Bulanan": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Dana Tak Terduga"},
     "Keperluan Rumah Habis Pakai": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Keperluan Rumah"},
     "Keperluan Rumah Tidak Habis Pakai": {"urgensi": "Bulanan", "kantong": "Bulanan Primer", "kategori": "Keperluan Rumah"},
@@ -142,12 +121,33 @@ SUBKATEGORI_DATA = {
     "Restoran": {"urgensi": "Bulanan", "kantong": "Bulanan Tersier", "kategori": "Makan Rekreatif"},
     "Kafe": {"urgensi": "Bulanan", "kantong": "Bulanan Tersier", "kategori": "Makan Rekreatif"},
     "Pesan Antar": {"urgensi": "Bulanan", "kantong": "Bulanan Tersier", "kategori": "Makan Rekreatif"},
+    "Ziswaf Lain": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Ziswaf"},
+    "Zakat Fitrah": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Zakat Fitrah"},
+    "Zakat Mal": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Zakat Mal"},
+    "Wakaf": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Wakaf"},
+    "Bela Sungkawa": {"urgensi": "Non-Bulanan", "kantong": "Ziswaf", "kategori": "Bela Sungkawa"},
+    "Pernikahan": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Pernikahan"},
+    "Keluarga": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
+    "Darurat (Keluarga)": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
+    "Travelio": {"urgensi": "Non-Bulanan", "kantong": "Keluarga", "kategori": "Keluarga"},
+    "Darurat": {"urgensi": "Non-Bulanan", "kantong": "Darurat", "kategori": "Darurat"},
+    "Haji": {"urgensi": "Non-Bulanan", "kantong": "Haji", "kategori": "Haji"},
+    "Liburan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Liburan"},
+    "Pulang Kampung": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pulang Kampung"},
+    "Masa Depan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
+    "Kerjaan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
+    "Investasi": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Investasi"},
+    "Langganan Lain2": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Masa Depan"},
+    "Konversi Uang": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Konversi Uang"},
+    "Pendidikan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pendidikan"},
+    "Pajak Tahunan": {"urgensi": "Non-Bulanan", "kantong": "Masa Depan", "kategori": "Pajak"},
+    "Anggaran Disimpan": {"urgensi": "Non-Bulanan", "kantong": "Anggaran Disimpan", "kategori": "Anggaran Disimpan"},
     "Emas": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Bibit": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Franchise/Bisnis": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Saham": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
     "Investasi Lain": {"urgensi": "Investasi", "kantong": "Masa Depan", "kategori": "Investasi"},
-    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"},
+    "Hutang": {"urgensi": "Investasi", "kantong": "Hutang", "kategori": "Hutang"},    
 }
 
 # ---------------------------------------------------------------
@@ -338,6 +338,25 @@ if st.button("Submit Data", use_container_width=True, type="primary"):
 
         except Exception as e:
             st.error(f"❌ Terjadi kesalahan: {e}")
+
+def render_subkategori_structure():
+    from collections import defaultdict
+
+    tree = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    for subkat, info in SUBKATEGORI_DATA.items():
+        tree[info["urgensi"]][info["kantong"]][info["kategori"]].append(subkat)
+
+    for urgensi in sorted(tree.keys()):
+        st.markdown(f"#### {urgensi}")
+        for kantong in sorted(tree[urgensi].keys()):
+            st.markdown(f"**{kantong}**")
+            for kategori in sorted(tree[urgensi][kantong].keys()):
+                subkats = ", ".join(sorted(tree[urgensi][kantong][kategori]))
+                st.markdown(f"- _{kategori}_: {subkats}")
+
+
+with st.expander("📖 Daftar Urgensi / Kantong / Kategori / Subkategori", expanded=False):
+    render_subkategori_structure()
 
 # ---------------------------------------------------------------
 # 3 latest expenses — from the "Pengeluaran" sheet using lastrow
