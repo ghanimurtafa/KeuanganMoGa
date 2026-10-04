@@ -473,12 +473,14 @@ try:
         total_row = _pad(primer[0] if len(primer) > 0 else [], 2)
         header_row = primer[1] if len(primer) > 1 else []
         render_group_table("Bulanan Primer", total_row[1], header_row, primer[2:])
-
+        st.caption("*termasuk pengeluaran masa depan yang sudah dicatatat")
+        
     # Bulanan Tersier categories
     if tersier:
         total_row = _pad(tersier[0] if len(tersier) > 0 else [], 2)
         header_row = tersier[1] if len(tersier) > 1 else []
         render_group_table("Bulanan Tersier", total_row[1], header_row, tersier[2:])
+        st.caption("*termasuk pengeluaran masa depan yang sudah dicatatat")
 
 except Exception as e:
     st.warning(f"Tidak bisa memuat ringkasan: {e}")
